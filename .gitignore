@@ -12,4 +12,5 @@
 
 ###> phpstorm ###
 .idea/
+.DS_Store
 ###< phpstorm ###
