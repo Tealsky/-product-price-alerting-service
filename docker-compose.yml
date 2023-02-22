@@ -1,7 +1,9 @@
 version: "3.4"
 
 networks:
-  app-tier:
+  api:
+    driver: bridge
+  elastic:
     driver: bridge
 
 services:
@@ -27,6 +29,10 @@ services:
       MERCURE_URL: ${CADDY_MERCURE_URL:-http://caddy/.well-known/mercure}
       MERCURE_PUBLIC_URL: https://${SERVER_NAME:-localhost}/.well-known/mercure
       MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+
+  # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
+  ###> symfony/mercure-bundle ###
+  ###< symfony/mercure-bundle ###
 
   caddy:
     build:
@@ -57,11 +63,9 @@ services:
         published: ${HTTP3_PORT:-443}
         protocol: udp
     networks:
-      - app-tier
+      - api
   rabbitmq:
-    build:
-      context: .
-      target: app_rabbitmq
+    image: rabbitmq:3.11.9-management
     ports:
       - '5672:5672'
       - '15672:15672'
@@ -72,14 +76,8 @@ services:
     volumes:
       - "./docker/rabbitmq/rabbit_enabled_plugins:/etc/rabbitmq/enabled_plugins"
     networks:
-      - app-tier
+      - api
 
-
-  # Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
-
-###> doctrine/doctrine-bundle ###
   database:
     image: postgres:${POSTGRES_VERSION:-15}-alpine
     environment:
@@ -91,7 +89,31 @@ services:
       - database_data:/var/lib/postgresql/data:rw
       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+
+  elasticsearch:
+    image: elasticsearch:${ELASTICSEARCH_VERSION:-8.6.2}
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - target: 9200
+        published: 9200
+    networks:
+      - elastic
+
+  kibana:
+    image: kibana:${ELASTICSEARCH_VERSION:-8.6.2}
+    ports:
+      - target: 5601
+        published: 5601
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
 
 volumes:
   php_socket:
@@ -103,3 +125,5 @@ volumes:
 ###> doctrine/doctrine-bundle ###
   database_data:
 ###< doctrine/doctrine-bundle ###
+  es_data:
+    driver: local
