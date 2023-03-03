@@ -8,6 +8,7 @@ PHP_CONT = $(DOCKER_COMP) exec php
 PHP      = $(PHP_CONT) php
 COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP_CONT) bin/console
+TESTS    = $(PHP_CONT) bin/phpunit
 
 # Misc
 .DEFAULT_GOAL = help
@@ -48,6 +49,11 @@ vendor: composer
 sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
 	@$(eval c ?=)
 	@$(SYMFONY) $(c)
+
+## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
+phpunit: ## Run application tests, pass the parameter "c=" to run a given command, example: make phpunit 'c=debug'
+	@$(eval c ?=)
+	@$(TESTS) $(c)
 
 cc: c=c:c ## Clear the cache
 cc: sf
