@@ -9,6 +9,7 @@ PHP      = $(PHP_CONT) php
 COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP_CONT) bin/console
 TESTS    = $(PHP_CONT) bin/phpunit
+BEHAT    = $(PHP_CONT) vendor/bin/behat
 
 # Misc
 .DEFAULT_GOAL = help
@@ -50,10 +51,15 @@ sf: ## List all Symfony commands or pass the parameter "c=" to run a given comma
 	@$(eval c ?=)
 	@$(SYMFONY) $(c)
 
-## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
+## —— PHPUnit ———————————————————————————————————————————————————————————————
 phpunit: ## Run application tests, pass the parameter "c=" to run a given command, example: make phpunit 'c=debug'
 	@$(eval c ?=)
 	@$(TESTS) $(c)
+
+## —— Behat ———————————————————————————————————————————————————————————————
+behat: ## Run Behat tests, pass the parameter "c=" to run a given command, example: make phpunit 'c=--help'
+	@$(eval c ?=)
+	@$(BEHAT) $(c)
 
 cc: c=c:c ## Clear the cache
 cc: sf
