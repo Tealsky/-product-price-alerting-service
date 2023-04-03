@@ -19,3 +19,11 @@ Feature: User search
             | Amazon      | 650                 | 700                  | 650          |
             | Rakuten     | 700                 | 12                   | 12           |
             | Darty       | 1400                | 1800                 | 1400          |
+
+    Scenario: Cannot find the lowest price for a product
+        Given there is a shop named Amazon in France
+        And there is no "Google Pixel 7"
+        When I search for a "Google Pixel 7"
+        Then I should get an exception because no lowest price found
+
+    Scenario:

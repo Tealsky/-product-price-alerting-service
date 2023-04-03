@@ -12,6 +12,7 @@ use Behat\Behat\Context\Context;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertIsNumeric;
 use function PHPUnit\Framework\assertIsString;
+use function PHPUnit\Framework\assertNull;
 
 final class SearchContext implements Context
 {
@@ -100,5 +101,25 @@ final class SearchContext implements Context
         $lowestPrice = $lowestProductPrice->getAmount();
 
         assertEquals($lowestPrice, (float)$price, "The lowest price should be $lowestPrice €");
+    }
+
+    /**
+     * @Given there is no :productName
+     */
+    public function thereIsNo($productName)
+    {
+        assertIsString($productName);
+    }
+
+    /**
+     * @Then I should get an exception because no lowest price found
+     */
+    public function iShouldGetAnExceptionBecauseNoLowestPriceFound()
+    {
+        try {
+            assertNull($this->product->getLowestProductPrice());
+        } catch (\Exception $e) {
+            assertIsString($e->getMessage());
+        }
     }
 }
