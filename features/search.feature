@@ -6,17 +6,16 @@ Feature: User search
 
     Background:
         Given a product named "Google Pixel 7"
-        And an online store named "Amazon"
-#        And an online store named named "Rakuten"
-#        And an online store named named "Darty"
 
-    Scenario Outline: Find the product lowest price on <online shop>
-        Given there is a "Google Pixel 7", which costs <first product price> on <online shop>
-        And there is another "Google Pixel 7", which costs <second product price> on <online shop>
-        When when I search for "Google Pixel 7"
-        Then I should get one "Google Pixel 7" product, which costs <lowest price>
+    Scenario Outline: Find the product lowest price
+        Given there is a shop named "<online shop>" in France
+        And there is one "Google Pixel 7", which costs <first product price>€
+        And there is another "Google Pixel 7", which costs <second product price>€
+        When I search for a "Google Pixel 7"
+        Then I should get a "Google Pixel 7", which costs <lowest price>€
 
         Examples:
             | online shop | first product price | second product price | lowest price |
-            | Amazon      | 650€                | 700€                 | 650€         |
-            | Rakuten     | 800€                | 12€                  | 12€          |
+            | Amazon      | 650                 | 700                  | 650          |
+            | Rakuten     | 700                 | 12                   | 12           |
+            | Darty       | 1400                | 1800                 | 1400          |
