@@ -58,6 +58,9 @@ class ProductPrice
      */
     public function setAmount(float $amount): void
     {
+        if ($amount <= 0) {
+            throw new \Exception("The amount should be higher to zero");
+        }
         $this->amount = $amount;
     }
 

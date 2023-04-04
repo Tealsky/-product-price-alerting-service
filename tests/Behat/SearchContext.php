@@ -9,12 +9,14 @@ use App\Entity\ProductPrice;
 use App\Entity\Shop;
 use App\Entity\ShopUrl;
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
+use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertIsNumeric;
 use function PHPUnit\Framework\assertIsString;
 use function PHPUnit\Framework\assertNull;
 
-final class SearchContext implements Context
+final class SearchContext extends TestCase implements Context
 {
     /**
      * @var Product
@@ -101,6 +103,40 @@ final class SearchContext implements Context
         $lowestPrice = $lowestProductPrice->getAmount();
 
         assertEquals($lowestPrice, (float)$price, "The lowest price should be $lowestPrice €");
+    }
+
+    /**
+     * @Given there is one :productName, which costs the following prices:
+     */
+    public function thereIsOneWhichCostsTheFollowingPrices($productName, TableNode $amounts)
+    {
+        assertIsString($productName);
+        $this->product->setName($productName);
+
+        $amounts = $amounts->getColumnsHash();
+        foreach ($amounts as $row) {
+            assertIsNumeric($row['amount']);
+            $amount = (float) $row['amount'];
+
+            try {
+                $productPrice = new ProductPrice();
+                $productPrice->setAmount($amount);
+
+                $this->product->addProductPrice($productPrice);
+            } catch (\Exception $e) {
+                $this->assertSame("The amount should be higher to zero", $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @Then product should get :finalNumberOfProductPrices product price attached instead of :initialNumberOfProductPrices
+     */
+    public function productShouldGetProductPriceAttachedInsteadOf(
+        $finalNumberOfProductPrices,
+        $initialNumberOfProductPrices
+    ) {
+        assertEquals($finalNumberOfProductPrices, count($this->product->getProductPriceList()));
     }
 
     /**
