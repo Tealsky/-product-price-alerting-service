@@ -14,6 +14,7 @@ use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertIsNumeric;
 use function PHPUnit\Framework\assertIsString;
 use function PHPUnit\Framework\assertNull;
+use function PHPUnit\Framework\assertSame;
 
 final class SearchContext implements Context
 {
@@ -123,7 +124,7 @@ final class SearchContext implements Context
 
                 $this->product->addProductPrice($productPrice);
             } catch (\Exception $e) {
-                $this->assertSame("The amount should be higher to zero", $e->getMessage());
+                assertSame("The amount should be higher to zero", $e->getMessage());
             }
         }
     }
