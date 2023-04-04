@@ -1,4 +1,5 @@
 
+@search
 Feature: User search
     In order to find the lowest price for a product
     As a user
@@ -7,6 +8,7 @@ Feature: User search
     Background:
         Given a product named "Google Pixel 7"
 
+    @price
     Scenario Outline: Find the product lowest price in multiple shops
         Given there is a shop named "<online shop>" in France
         And there is one "Google Pixel 7", which costs <first product price>€
@@ -20,6 +22,7 @@ Feature: User search
             | Rakuten     | 700                 | 12                   | 12           |
             | Darty       | 1400                | 1800                 | 1400         |
 
+    @price
     Scenario: Find the product lowest price of the shop
         Given there is a shop named "Amazon" in France
         And there is one "Google Pixel 7", which costs the following prices:
@@ -32,6 +35,7 @@ Feature: User search
         When I search for a "Google Pixel 7"
         Then I should get a "Google Pixel 7", which costs "649.99"€
 
+    @price
     Scenario: Find the product lowest price of the shop
         Given there is a shop named "Amazon" in France
         And there is one "Google Pixel 7", which costs the following prices:
@@ -44,6 +48,7 @@ Feature: User search
         When I search for a "Google Pixel 7"
         Then product should get 3 product price attached instead of 5
 
+    @price
     Scenario: Cannot find the lowest price for a product
         Given there is a shop named Amazon in France
         And there is no "Google Pixel 7"
