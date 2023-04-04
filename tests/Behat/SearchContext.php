@@ -10,13 +10,12 @@ use App\Entity\Shop;
 use App\Entity\ShopUrl;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
-use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertIsNumeric;
 use function PHPUnit\Framework\assertIsString;
 use function PHPUnit\Framework\assertNull;
 
-final class SearchContext extends TestCase implements Context
+final class SearchContext implements Context
 {
     /**
      * @var Product
