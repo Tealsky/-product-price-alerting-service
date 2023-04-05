@@ -83,5 +83,4 @@ final class BrowseShopContext implements Context
     {
         $this->response = $this->browser->request('GET', $searchQuery);
     }
-    
 }
