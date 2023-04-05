@@ -1,11 +1,15 @@
 default:
     suites:
-        default:
+        search:
             contexts:
-                - App\Tests\Behat\DemoContext
                 - App\Tests\Behat\SearchContext
+            filters:
+                tags: "@search"
+        browse:
+            contexts:
                 - App\Tests\Behat\BrowseShopContext
-
+            filters:
+                tags: "@browse"
     extensions:
         FriendsOfBehat\SymfonyExtension:
             kernel:
