@@ -25,15 +25,34 @@ final class BrowseShopContext implements Context
      */
     private Crawler $response;
 
+    /**
+     * @var Shop
+     */
+    private Shop $shop;
+
+    /**
+     * @var ShopUrl
+     */
+    private ShopUrl $shopUrl;
+
     public function __construct()
     {
         $this->browser = new HttpBrowser(HttpClient::create());
     }
 
     /**
-     * @Given a shop named :shopName with a website :url
+     * @Given a shop named :shopName
      */
-    public function aShopNamedWithAWebsite($shopName, $url)
+    public function aShopNamed($shopName)
+    {
+        $this->shop = new Shop();
+        $this->shop->setName($shopName);
+    }
+
+    /**
+     * @When I visit the website :url
+     */
+    public function iVisitTheWebsite($url)
     {
         $expectedShops = [
             "Amazon"=>"https://www.amazon.fr",
@@ -41,14 +60,11 @@ final class BrowseShopContext implements Context
             "Darty"=>"https://www.darty.com"
         ];
 
-        assertSame($expectedShops[$shopName], $url);
+        assertSame($expectedShops[$this->shop->getName()], $url);
 
-        $shop = new Shop();
-        $shop->setName($shopName);
-
-        $shopUrl = new ShopUrl();
-        $shopUrl->setShop($shop);
-        $shopUrl->setUrl($url);
+        $this->shopUrl = new ShopUrl();
+        $this->shopUrl->setShop($this->shop);
+        $this->shopUrl->setUrl($url);
 
         $this->response = $this->browser->request('GET', $url);
     }
@@ -58,8 +74,14 @@ final class BrowseShopContext implements Context
      */
     public function theResponseShouldBeReceived(): void
     {
-        if ($this->response === null) {
-            throw new \HttpRuntimeException('No response received');
-        }
     }
+
+    /**
+     * @When I visit the path :searchQuery
+     */
+    public function iVisitThePath($searchQuery)
+    {
+        $this->response = $this->browser->request('GET', $searchQuery);
+    }
+    
 }
