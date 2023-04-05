@@ -4,13 +4,10 @@ default:
             contexts:
                 - App\Tests\Behat\DemoContext
                 - App\Tests\Behat\SearchContext
+                - App\Tests\Behat\BrowseShopContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:
             kernel:
                 environment: test
             bootstrap: tests/bootstrap.php
-        Behat\MinkExtension:
-            sessions:
-                symfony:
-                    symfony: ~
