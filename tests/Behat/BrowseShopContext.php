@@ -11,6 +11,7 @@ use Symfony\Component\BrowserKit\HttpBrowser;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
+use function PHPUnit\Framework\assertIsString;
 use function PHPUnit\Framework\assertSame;
 
 final class BrowseShopContext implements Context
@@ -82,5 +83,28 @@ final class BrowseShopContext implements Context
     public function iVisitThePath($searchQuery)
     {
         $this->response = $this->browser->request('GET', $searchQuery);
+
+        $this->shopUrl->setSearchQuery($searchQuery);
+    }
+
+    /**
+     * @When I search for a product called :search with the url : :url
+     */
+    public function iSearchForAProductCalledWithTheUrl($search, $url)
+    {
+        $this->response = $this->browser->request('GET', $url);
+    }
+
+    /**
+     * @Then The main results section should be present.
+     */
+    public function theMainResultsSectionShouldBePresent()
+    {
+        $resultSection = $this->response
+            ->filter('span[data-component-type="s-search-results"]')
+            ->filter('[cel_widget_id="MAIN-TOP_BANNER_MESSAGE-1"]')
+            ->html();
+
+        assertIsString($resultSection);
     }
 }
